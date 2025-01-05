@@ -1,3 +1,16 @@
+//Informatyka II projekt - Wizualizacja ruroci¹gu z systemem rêcznej i automatycznej symulacji pewnego procesu technologicznego
+
+//Opis programu:
+//Symulacja przewiduje zarówno sterowanie rêczne jak i automatyczne uk³adu 5 zbiorników i systemu rur.
+
+//Przewidziane s¹ takie funkcjonalnoœci jak : rêczny przesy³ dowolnej iloœci cieczy pomiêdzy zbiornikami, mo¿liwoœæ mieszania cieczy w przewidzianym do tego zbiorniku, mo¿liwoœæ podgrzewania i ch³odzenia cieczy do okreœlonej temperatury w przewidzianym do tego zbiorniku, mo¿liwoœæ sterowania 2 zaworami wpuszczaj¹cymi i spuszczaj¹cymi ciecz z systemu.
+
+//U¿ytkownik ma mo¿liwoœæ wybrania tak¿e jednego z 4 przygotowanych scenariuszy automatycznych : Och³adzanie lub podgrzewanie cieczy w zbiorniku nr. 4 (o ile znajduje siê w nim ciecz) do zadanej temperatury, wymieszanie cieczy w zbiorniku 3 (o ile znajduje siê w nim ciecz) oraz przeprowadzenie pe³nego, automatycznego procesu technologicznego.
+
+//U¿ytkownik ma mo¿liwoœæ przyciskiem F1 przejœæ do ekranu opisuj¹cego wszystkie przyciski, F2, by sprawdziæ szczegó³owe dane dotycz¹ce zbiorników i cieczy, F3 by wybraæ scenariusz sterowania automatycznego.W przypadku, w którym u¿ytkownik bêdzie wydawaæ polecenie niemo¿liwe do zrealizowania przez program, na ekranie pojawi siê specjalny komunikat - alert, z odpowiedni¹ wiadomoœci¹.Szczegó³y dotycz¹ce przeprowadzanych czynnoœci bêd¹ tak¿e wysy³ane do konsoli.
+
+//U¿ytkownik ma w dowolnym momencie mo¿liwoœæ zapisania stanu symulacji do pliku "backup.txt", wczytania stanu animacji z tego pliku, oraz mo¿liwoœæ zamkniêcia programu klawiszem escape(wymagane bêdzie dodatkowe potwierdzenie).
+
 #include <SFML/Graphics.hpp> //sfml
 #include <vector> //wektory
 #include <iostream> 
