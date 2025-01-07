@@ -800,61 +800,78 @@ std::wstring tekst_info_aktyw_scenariusz(rodzaje_scenariuszy scenariusz) {
     }
 }
 
-int main() {
+void inicjalizacja(sf::Font& czcionka, sf::RenderWindow& window,
+    std::vector<plomien>& wplomien, std::vector<Zbiornik>& wzbiorniki,
+    std::vector<rura>& wrura, zawor& zawor_napelniajacy,
+    zawor& zawor_spustowy, int& wybrany_zbiornik, bool& zawor_spustowy_otwarty,
+    float& szybkosc_napelniania_zb, float& predkosc_oprozniania_zb,
+    float& predkosc_przesylu, float& temperatura_zb_4, float& poprzedni_poziom_napelnienia_zb3,
+    sf::RectangleShape& mikser, bool& mikser_on, bool& zb_4_pusty, bool& ekran_ze_scenariuszami,
+    float& kat_miksera, float& poziom_wymieszania, Menedzer_scenariuszy& Menedzer_scenariuszy,
+    rodzaje_scenariuszy& aktywny_scenariusz, Panel_kontrolny& Panel_kontrolny) {
 
-    //Jêzyk
+    // Inicjalizacja czcionki
+    if (!czcionka.loadFromFile("arial.ttf")) {
+        std::cerr << L"Nie mo¿na za³adowaæ czcionki!\n";
+        throw std::runtime_error("B³¹d ³adowania czcionki");
+    }
+
+    // Inicjalizacja okna
+    window.create(sf::VideoMode(800, 700), "Wizualizacja Rurociagu");
+    window.setFramerateLimit(60);
+
+    // Tworzenie obiektów zbiorników, rur, zaworów
+    wzbiorniki = Zbiornik::utworz_zbiorniki();
+    wrura = rura::utworz_rury();
+    zawor_napelniajacy = zawor(100, 150);
+    zawor_spustowy = zawor(600, 630);
+
+    //Ustawianie wartoœci
+    wybrany_zbiornik = 0;
+    zawor_spustowy_otwarty = false;
+    szybkosc_napelniania_zb = 1.0;
+    predkosc_oprozniania_zb = 0.5f;
+    predkosc_przesylu = 0.5;
+    temperatura_zb_4 = 20.0f;
+    poprzedni_poziom_napelnienia_zb3 = wzbiorniki[2].poziom_napelnienia;
+
+    // Mieszalnik w zbiorniku 3
+    mikser.setSize(sf::Vector2f(60, 5));
+    mikser.setFillColor(sf::Color::Black);
+    mikser.setOrigin(30, 2.5f); // przenosi punkt pocz¹tkowy na œrodek miksera
+    mikser.setPosition(wzbiorniki[2].kszatlt.getPosition().x + 50, wzbiorniki[2].kszatlt.getPosition().y + 100);
+    mikser_on = false;
+    zb_4_pusty = false; // Flaga œledz¹ca, czy zbiornik 4 zosta³ opró¿niony
+    ekran_ze_scenariuszami = false;
+    kat_miksera = 0.0f;
+    poziom_wymieszania = 0.0f;
+
+    //Scenariusz
+    aktywny_scenariusz = Scenariusz_0;
+    Menedzer_scenariuszy.synchro_nazwe_aktw_scenariusza(aktywny_scenariusz);
+
+    
+
+    // Jêzyk
     setlocale(LC_ALL, "pl_PL.UTF-8");
     std::locale::global(std::locale("pl_PL.UTF-8"));
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
+}
 
-    //czcionka
-    sf::Font czcionka;
-    if (!czcionka.loadFromFile("arial.ttf")) {
-        std::cerr << L"Nie mo¿na za³adowaæ czcionki!\n";
-        return -1;
-    }
-
-    //renderowanie
-    sf::RenderWindow window(sf::VideoMode(800, 700), "Wizualizacja Rurociagu");
-    window.setFramerateLimit(60);
-    std::vector<plomien> wplomien;
-    std::vector<Zbiornik> wzbiorniki = Zbiornik::utworz_zbiorniki();
-    std::vector<rura> wrura = rura::utworz_rury();
-    zawor zawor_napelniajacy(100, 150);
-    zawor zawor_spustowy(600, 630);
-
-    //Ustawianie wartoœci
-    int wybrany_zbiornik = 0;
-    bool zawor_spustowy_otwarty = false;
-    float szybkosc_napelniania_zb = 1.0;
-    float predkosc_oprozniania_zb = 0.5f;
-    float predkosc_przesylu = 0.5;
-    float temperatura_zb_4 = 20.0f;
-    float poprzedni_poziom_napelnienia_zb3 = wzbiorniki[2].poziom_napelnienia;
-
-    // Mieszalnik w zbiorniku 3
+void obslugaGlownejPetli(sf::RenderWindow& window, std::vector<plomien>& wplomien, std::vector<Zbiornik>& wzbiorniki, std::vector<rura>& wrura, zawor& zawor_napelniajacy, zawor& zawor_spustowy, sf::Font& czcionka, Menedzer_scenariuszy& Menedzer_scenariuszy, Panel_kontrolny& Panel_kontrolny, float& temperatura_zb_4, float& poziom_wymieszania, rodzaje_scenariuszy& aktywny_scenariusz, bool& mikser_on, bool& zawor_spustowy_otwarty, bool& ekran_ze_scenariuszami, int& wybrany_zbiornik, float predkosc_przesylu, float szybkosc_napelniania_zb, float predkosc_oprozniania_zb)
+ {
     sf::RectangleShape mikser(sf::Vector2f(60, 5));
     mikser.setFillColor(sf::Color::Black);
-    mikser.setOrigin(30, 2.5f); // przenosi punkt pocz¹tkowy na œrodek miksera
+    mikser.setOrigin(30, 2.5f);
     mikser.setPosition(wzbiorniki[2].kszatlt.getPosition().x + 50, wzbiorniki[2].kszatlt.getPosition().y + 100);
-    bool mikser_on = false;
-    bool zb_4_pusty = false; // Flaga œledz¹ca, czy zbiornik 4 zosta³ opró¿niony
-    bool ekran_ze_scenariuszami = false;
-    float kat_miksera = 0.0f;
-    float poziom_wymieszania = 0.0f;
 
-    //Scenariusz
-    Menedzer_scenariuszy Menedzer_scenariuszy(czcionka);
-    rodzaje_scenariuszy aktywny_scenariusz = Scenariusz_0;
-    Menedzer_scenariuszy.synchro_nazwe_aktw_scenariusza(aktywny_scenariusz);
+    float kat_miksera = 0.0f;
+    bool zb_4_pusty = false;
+    float poprzedni_poziom_napelnienia_zb3 = wzbiorniki[2].poziom_napelnienia;
 
     while (window.isOpen()) {
         sf::Event event;
-
-        // Tworzenie obiektu Panel_kontrolny
-        Panel_kontrolny Panel_kontrolny(800, 100, "arial.ttf");
-
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 Zapis_stanu(wzbiorniki, temperatura_zb_4, mikser_on, poziom_wymieszania, zawor_spustowy_otwarty, zawor_napelniajacy.jest_otwarty, aktywny_scenariusz);
@@ -1034,6 +1051,8 @@ int main() {
                 }
             }
         }
+
+        // Aktualizacja logiki gry...
 
         window.clear(sf::Color::White);
 
@@ -1353,6 +1372,47 @@ int main() {
 
         window.display();
     }
+}
+
+int main() {
+
+    // Deklaracje
+    sf::Font czcionka;
+    sf::RenderWindow window;
+    std::vector<plomien> wplomien;
+    std::vector<Zbiornik> wzbiorniki;
+    std::vector<rura> wrura;
+    zawor zawor_napelniajacy(0, 0);
+    zawor zawor_spustowy(0, 0);
+    int wybrany_zbiornik;
+    bool zawor_spustowy_otwarty;
+    float szybkosc_napelniania_zb;
+    float predkosc_oprozniania_zb;
+    float predkosc_przesylu;
+    float temperatura_zb_4;
+    float poprzedni_poziom_napelnienia_zb3;
+
+    sf::RectangleShape mikser;
+    bool mikser_on;
+    bool zb_4_pusty;
+    bool ekran_ze_scenariuszami;
+    float kat_miksera;
+    float poziom_wymieszania;
+
+    Menedzer_scenariuszy Menedzer_scenariuszy(czcionka);
+    rodzaje_scenariuszy aktywny_scenariusz;
+    Panel_kontrolny Panel_kontrolny(800, 100, "arial.ttf");
+
+
+    // Inicjalizacja
+    inicjalizacja(czcionka, window, wplomien, wzbiorniki, wrura, zawor_napelniajacy, zawor_spustowy, wybrany_zbiornik, zawor_spustowy_otwarty, szybkosc_napelniania_zb, predkosc_oprozniania_zb, predkosc_przesylu, temperatura_zb_4, poprzedni_poziom_napelnienia_zb3, mikser, mikser_on, zb_4_pusty, ekran_ze_scenariuszami, kat_miksera, poziom_wymieszania, Menedzer_scenariuszy, aktywny_scenariusz, Panel_kontrolny);
+    
+    obslugaGlownejPetli(window, wplomien, wzbiorniki, wrura, zawor_napelniajacy, zawor_spustowy, czcionka, Menedzer_scenariuszy, Panel_kontrolny, temperatura_zb_4, poziom_wymieszania, aktywny_scenariusz, mikser_on, zawor_spustowy_otwarty, ekran_ze_scenariuszami, wybrany_zbiornik, predkosc_przesylu, szybkosc_napelniania_zb, predkosc_oprozniania_zb);
 
     return 0;
 }
+
+
+
+
+
