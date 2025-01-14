@@ -1,3 +1,4 @@
+# Michał Czapliński s199321
 # Informatyka II projekt - Wizualizacja rurociągu z systemem ręcznej i automatycznej symulacji pewnego procesu technologicznego
 
 Temat projektu: Wizualizacja rurociągu z systemem ręcznej i automatycznej symulacji pewnego procesu technologicznego
